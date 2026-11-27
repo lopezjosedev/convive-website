@@ -1,0 +1,143 @@
+/* ==========================================================================
+   CONVIVE — Animaciones y microinteracciones
+   ========================================================================== */
+
+/* ---- Scroll reveal (activado vía IntersectionObserver en reveal.js) ---- */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.8s var(--ease-out), transform 0.8s var(--ease-out);
+}
+
+[data-reveal].is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+[data-reveal="fade"] { transform: none; }
+
+[data-reveal="scale"] { transform: scale(0.94); }
+[data-reveal="scale"].is-visible { transform: scale(1); }
+
+[data-reveal="left"] { transform: translateX(-32px); }
+[data-reveal="left"].is-visible { transform: translateX(0); }
+
+[data-reveal="right"] { transform: translateX(32px); }
+[data-reveal="right"].is-visible { transform: translateX(0); }
+
+/* Retraso escalonado para grupos (data-reveal-group) */
+[data-reveal-delay="1"] { transition-delay: 0.08s; }
+[data-reveal-delay="2"] { transition-delay: 0.16s; }
+[data-reveal-delay="3"] { transition-delay: 0.24s; }
+[data-reveal-delay="4"] { transition-delay: 0.32s; }
+[data-reveal-delay="5"] { transition-delay: 0.4s; }
+
+/* -------------------------------- Keyframes ------------------------------ */
+@keyframes float-y {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-14px); }
+}
+
+@keyframes float-y-sm {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-7px); }
+}
+
+@keyframes pulse-ring {
+  0% { box-shadow: 0 0 0 0 rgba(46,196,182,0.35); }
+  70% { box-shadow: 0 0 0 12px rgba(46,196,182,0); }
+  100% { box-shadow: 0 0 0 0 rgba(46,196,182,0); }
+}
+
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes blob-morph {
+  0%, 100% { border-radius: 42% 58% 60% 40% / 45% 40% 60% 55%; }
+  50% { border-radius: 60% 40% 42% 58% / 55% 60% 40% 45%; }
+}
+
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes dash-flow {
+  to { stroke-dashoffset: -24; }
+}
+
+.float { animation: float-y 6s ease-in-out infinite; }
+.float-sm { animation: float-y-sm 4.5s ease-in-out infinite; }
+.spin-slow { animation: spin-slow 18s linear infinite; }
+
+.gradient-bg-animated {
+  background-size: 200% 200%;
+  animation: gradient-shift 10s ease infinite;
+}
+
+/* ---------------------------- Flow diagram (cómo funciona) --------------- */
+.flow-connector path {
+  stroke-dasharray: 6 6;
+}
+
+.flow-connector.is-active path {
+  animation: dash-flow 1.2s linear infinite;
+}
+
+.flow-step {
+  transition: transform var(--dur-slow) var(--ease-out), box-shadow var(--dur-slow) var(--ease-out);
+}
+
+.flow-step.is-active {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-glow);
+}
+
+.flow-step.is-active .flow-step-icon {
+  background: var(--g-brand);
+}
+
+.flow-step.is-active .flow-step-icon svg {
+  filter: brightness(0) invert(1);
+}
+
+/* ---------------------------------- Counters ----------------------------- */
+[data-counter] {
+  font-variant-numeric: tabular-nums;
+}
+
+/* --------------------------------- Hero blobs ----------------------------- */
+.hero-blob {
+  position: absolute;
+  filter: blur(60px);
+  opacity: 0.55;
+  animation: blob-morph 12s ease-in-out infinite;
+  z-index: -1;
+}
+
+/* -------------------------- Dashboard illustration ------------------------ */
+@keyframes grow-bar {
+  from { transform: scaleY(0); }
+  to { transform: scaleY(1); }
+}
+
+.chart-bar {
+  transform-origin: bottom;
+  animation: grow-bar 1s var(--ease-out) both;
+}
+
+@keyframes ring-pulse {
+  0% { opacity: 0.6; r: 5; }
+  100% { opacity: 0; r: 16; }
+}
+
+.pulse-dot {
+  animation: ring-pulse 1.8s ease-out infinite;
+}

@@ -1,0 +1,440 @@
+/* ==========================================================================
+   CONVIVE — Widget de chat (SOCI)
+   Reemplaza al widget embebido de SendPulse. Usa los mismos tokens que el
+   resto del sitio (assets/css/variables.css) para quedar integrado.
+   ========================================================================== */
+
+.soci-bubble {
+  position: fixed;
+  right: var(--sp-md);
+  bottom: var(--sp-md);
+  width: 62px;
+  height: 62px;
+  border-radius: var(--radius-full);
+  background: var(--g-brand);
+  border: none;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  /* por encima del panel (que ahora es pantalla completa): cuando esta
+     abierto, esta misma burbuja pasa a ser el boton de cerrar (X). */
+  z-index: calc(var(--z-modal) + 2);
+  color: var(--c-white);
+  transition: transform var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out),
+    top var(--dur-base) var(--ease-out), right var(--dur-base) var(--ease-out), bottom var(--dur-base) var(--ease-out);
+  animation: soci-bubble-in var(--dur-slow) var(--ease-out);
+}
+
+.soci-bubble.is-open {
+  /* reubicada como "cerrar" arriba a la derecha, estilo modal, para no
+     taparse con el campo de texto del chat (que ocupa todo el ancho
+     abajo cuando el panel es pantalla completa). */
+  top: calc(var(--sp-sm) + env(safe-area-inset-top, 0px));
+  right: var(--sp-sm);
+  bottom: auto;
+  width: 44px;
+  height: 44px;
+  box-shadow: var(--shadow-md, var(--shadow-lg));
+}
+
+.soci-bubble:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: var(--shadow-glow);
+}
+
+.soci-bubble:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.soci-bubble svg {
+  width: 26px;
+  height: 26px;
+  transition: opacity var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
+}
+
+.soci-bubble__close {
+  position: absolute;
+  opacity: 0;
+  transform: scale(0.6) rotate(-45deg);
+}
+
+.soci-bubble.is-open .soci-bubble__chat {
+  opacity: 0;
+  transform: scale(0.6) rotate(45deg);
+}
+
+.soci-bubble.is-open .soci-bubble__close {
+  opacity: 1;
+  transform: scale(1) rotate(0deg);
+}
+
+.soci-bubble__dot {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: var(--radius-full);
+  background: var(--c-aqua-500);
+  border: 2px solid var(--c-white);
+}
+
+.soci-bubble__dot.is-hidden {
+  display: none;
+}
+
+@keyframes soci-bubble-in {
+  from { opacity: 0; transform: scale(0.5); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.soci-panel {
+  /* Pantalla completa a propósito (pedido de Cande): mientras un
+     alumno responde la encuesta, no tiene que verse nada del sitio
+     detrás — queda más limpio y evita distracciones. */
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: var(--c-surface);
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  z-index: calc(var(--z-modal) + 1);
+  display: flex;
+  flex-direction: column;
+  /* "clip", no "hidden": al enfocar un checkbox (opciones de selección
+     múltiple), el navegador hace scroll-into-view en TODOS los
+     ancestros con scroll, incluido este panel — aunque tenga su propio
+     scroll "apagado" con overflow:hidden, igual cuenta como contenedor
+     de scroll y termina empujando todo el panel fuera de pantalla
+     (pantalla en blanco). overflow:clip corta visualmente igual que
+     hidden, pero el elemento deja de ser un contenedor de scroll, así
+     que el navegador lo salta. */
+  overflow: clip;
+  opacity: 0;
+  transform: scale(0.98);
+  pointer-events: none;
+  transition: opacity var(--dur-base) var(--ease-out), transform var(--dur-base) var(--ease-out);
+}
+
+.soci-panel.is-open {
+  opacity: 1;
+  transform: scale(1);
+  pointer-events: auto;
+}
+
+.soci-panel__header {
+  padding-top: calc(var(--sp-sm) + env(safe-area-inset-top, 0px));
+}
+
+.soci-panel__body {
+  max-width: 640px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.soci-panel__footer {
+  padding-bottom: calc(var(--sp-2xs) + env(safe-area-inset-bottom, 0px));
+}
+
+.soci-panel__header {
+  background: var(--g-brand);
+  color: var(--c-white);
+  padding: var(--sp-sm) var(--sp-md);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-xs);
+  flex-shrink: 0;
+}
+
+.soci-panel__avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.22);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.soci-panel__avatar svg { width: 20px; height: 20px; }
+
+.soci-panel__title { font-weight: var(--fw-semibold); font-size: var(--fs-sm); line-height: var(--lh-tight); }
+
+.soci-panel__subtitle {
+  font-size: var(--fs-xs);
+  opacity: 0.85;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.soci-panel__subtitle::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: var(--radius-full);
+  background: #6ee7b7;
+  box-shadow: 0 0 0 2px rgba(110, 231, 183, 0.35);
+}
+
+.soci-panel__body {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--sp-sm);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2xs);
+  background: var(--c-surface-2);
+  scroll-behavior: smooth;
+}
+
+.soci-msg {
+  max-width: 84%;
+  padding: 0.55rem 0.8rem;
+  border-radius: var(--radius-md);
+  font-size: var(--fs-sm);
+  line-height: var(--lh-normal);
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  animation: soci-msg-in var(--dur-fast) var(--ease-out);
+}
+
+@keyframes soci-msg-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.soci-msg--bot {
+  align-self: flex-start;
+  background: var(--c-white);
+  border: 1px solid var(--c-border);
+  color: var(--c-ink-900);
+  border-bottom-left-radius: 4px;
+}
+
+.soci-msg--user {
+  align-self: flex-end;
+  background: var(--g-brand);
+  color: var(--c-white);
+  border-bottom-right-radius: 4px;
+}
+
+.soci-msg--image img {
+  display: block;
+  max-width: 100%;
+  border-radius: var(--radius-sm);
+  margin-top: 4px;
+}
+
+.soci-options {
+  align-self: flex-start;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-width: 92%;
+  margin-top: 2px;
+}
+
+.soci-options--row { flex-direction: row; flex-wrap: wrap; }
+
+.soci-option {
+  background: var(--c-white);
+  border: 1.5px solid var(--c-blue-500);
+  color: var(--c-blue-600);
+  font-family: inherit;
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-medium);
+  padding: 0.5rem 0.85rem;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  text-align: left;
+  transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
+}
+
+.soci-option:hover:not(:disabled) {
+  background: var(--c-blue-500);
+  color: var(--c-white);
+  transform: translateY(-1px);
+}
+
+.soci-option:disabled { opacity: 0.5; cursor: default; }
+
+.soci-list-row {
+  background: var(--c-white);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-sm);
+  padding: 0.55rem 0.75rem;
+  cursor: pointer;
+  transition: border-color var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out);
+}
+
+.soci-list-row:hover:not(:disabled) {
+  border-color: var(--c-blue-500);
+  background: var(--c-blue-100);
+}
+
+.soci-list-row:disabled { opacity: 0.5; cursor: default; }
+
+.soci-list-row__title { font-size: var(--fs-xs); font-weight: var(--fw-semibold); color: var(--c-ink-900); }
+.soci-list-row__desc { font-size: 0.75rem; color: var(--c-ink-500); margin-top: 2px; }
+
+.soci-multi {
+  background: var(--c-white);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-md);
+  padding: 0.6rem;
+  gap: 2px;
+}
+
+.soci-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 0.5rem 0.4rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease-out);
+}
+
+.soci-check:hover { background: var(--c-blue-100); }
+
+.soci-check input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.soci-check__box {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  margin-top: 1px;
+  border-radius: 6px;
+  border: 1.5px solid var(--c-border);
+  background: var(--c-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out);
+}
+
+.soci-check__box::after {
+  content: "";
+  width: 10px;
+  height: 6px;
+  border-left: 2px solid var(--c-white);
+  border-bottom: 2px solid var(--c-white);
+  transform: rotate(-45deg) scale(0);
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+
+.soci-check input:checked + .soci-check__box {
+  background: var(--g-brand);
+  border-color: var(--c-blue-500);
+}
+
+.soci-check input:checked + .soci-check__box::after { transform: rotate(-45deg) scale(1); }
+
+.soci-check input:focus-visible + .soci-check__box {
+  outline: 2px solid var(--c-blue-500);
+  outline-offset: 2px;
+}
+
+.soci-check__text { font-size: var(--fs-xs); line-height: var(--lh-normal); }
+.soci-check__title { display: block; color: var(--c-ink-900); font-weight: var(--fw-medium); }
+.soci-check__desc { display: block; color: var(--c-ink-500); margin-top: 1px; }
+
+.soci-multi__submit {
+  align-self: flex-end;
+  margin-top: 6px;
+  text-align: center;
+}
+
+.soci-typing {
+  align-self: flex-start;
+  display: flex;
+  gap: 4px;
+  padding: 0.7rem 0.9rem;
+  background: var(--c-white);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-md);
+  border-bottom-left-radius: 4px;
+}
+
+.soci-typing span {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-full);
+  background: var(--c-ink-300);
+  animation: soci-typing-bounce 1.1s infinite ease-in-out;
+}
+
+.soci-typing span:nth-child(2) { animation-delay: 0.15s; }
+.soci-typing span:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes soci-typing-bounce {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
+  30% { transform: translateY(-4px); opacity: 1; }
+}
+
+.soci-panel__footer {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2xs);
+  padding: var(--sp-2xs) var(--sp-sm);
+  border-top: 1px solid var(--c-border);
+  background: var(--c-white);
+}
+
+/* 27/10: pedido de Cande — mientras la pregunta pendiente es de botones o
+   lista (opción única o múltiple), se oculta el campo de texto libre para
+   que no se pueda escribir en vez de elegir una opción. Ver chat-widget.js
+   actualizarFormulario(). */
+.soci-panel__footer.is-hidden { display: none; }
+
+.soci-input {
+  flex: 1;
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-full);
+  padding: 0.6rem 1rem;
+  font-family: inherit;
+  font-size: var(--fs-sm);
+  color: var(--c-ink-900);
+  background: var(--c-surface-2);
+  outline: none;
+  transition: border-color var(--dur-fast) var(--ease-out);
+}
+
+.soci-input:focus { border-color: var(--c-blue-500); }
+.soci-input:disabled { opacity: 0.6; }
+
+.soci-send {
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-full);
+  border: none;
+  background: var(--g-brand);
+  color: var(--c-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform var(--dur-fast) var(--ease-out), opacity var(--dur-fast) var(--ease-out);
+}
+
+.soci-send:hover:not(:disabled) { transform: scale(1.07); }
+.soci-send:disabled { opacity: 0.45; cursor: default; }
+.soci-send svg { width: 17px; height: 17px; }
+
+@media (max-width: 480px) {
+  .soci-bubble { right: var(--sp-sm); bottom: var(--sp-sm); }
+}

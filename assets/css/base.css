@@ -1,0 +1,126 @@
+/* ==========================================================================
+   CONVIVE — Estilos base y utilidades globales
+   ========================================================================== */
+
+body {
+  font-family: var(--font-sans);
+  font-size: var(--fs-base);
+  color: var(--c-ink-700);
+  background: var(--c-surface);
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  color: var(--c-ink-900);
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-tight);
+  letter-spacing: -0.02em;
+}
+
+h2 { font-size: var(--fs-3xl); }
+h3 { font-size: var(--fs-xl); }
+h4 { font-size: var(--fs-md); }
+
+p {
+  color: var(--c-ink-500);
+  line-height: var(--lh-normal);
+}
+
+strong { font-weight: var(--fw-semibold); color: var(--c-ink-900); }
+
+/* Salvaguarda: cualquier <svg><use/></svg> sin tamaño explícito cae a 1em
+   en vez del default nativo de 300x150. Los selectores más específicos
+   de components/layout/sections tienen prioridad sobre esta regla. */
+svg {
+  width: 1em;
+  height: 1em;
+}
+
+/* ---- Utilidades de layout ---- */
+.container {
+  width: 100%;
+  max-width: var(--container-w);
+  margin-inline: auto;
+  padding-inline: var(--container-pad);
+}
+
+.section {
+  position: relative;
+  padding-block: var(--sp-3xl);
+}
+
+@media (max-width: 720px) {
+  .section { padding-block: var(--sp-2xl); }
+}
+
+.section-head {
+  max-width: 680px;
+  margin-bottom: var(--sp-2xl);
+}
+
+.section-head.center {
+  margin-inline: auto;
+  text-align: center;
+}
+
+/* ---- Tipografía utilitaria ---- */
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2xs);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--c-blue-600);
+  margin-bottom: var(--sp-sm);
+}
+
+.eyebrow::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--g-brand);
+  flex-shrink: 0;
+}
+
+.text-gradient {
+  background: var(--g-text);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.lead {
+  font-size: var(--fs-md);
+  color: var(--c-ink-500);
+  line-height: var(--lh-normal);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: var(--sp-sm);
+  z-index: var(--z-modal);
+  background: var(--c-white);
+  color: var(--c-ink-900);
+  padding: var(--sp-xs) var(--sp-md);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-md);
+  transition: top var(--dur-fast) var(--ease-out);
+}
+
+.skip-link:focus {
+  top: var(--sp-sm);
+}
